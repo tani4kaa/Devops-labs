@@ -8,6 +8,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,4 +29,6 @@ jobs:
         run: mvn clean install -DskipTests
 
       - name: Run tests
+        env:
+          SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/test
         run: mvn test
