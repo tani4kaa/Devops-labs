@@ -123,12 +123,17 @@ class BookServiceTest {
     }
 
     @Test
-    void whenCreateWithSameCodeDifferentNames_thenAllSaved() {
-        underTest.create(new BookCreateRequest("First", "DUPLICATE", "desc"));
-        underTest.create(new BookCreateRequest("Second", "DUPLICATE", "desc"));
+    void whenCreateWithSameCodeDifferentNames_thenSecondNotSaved() {
+        Book first = underTest.create(new BookCreateRequest("First", "DUPLICATE", "desc"));
+        Book second = underTest.create(new BookCreateRequest("Second", "DUPLICATE", "desc"));
+
         List<Book> result = repository.findAll().stream()
-                .filter(b -> b.getCode().equals("DUPLICATE")).toList();
-        assertEquals(2, result.size());
+                .filter(b -> b.getCode().equals("DUPLICATE"))
+                .toList();
+
+        assertNotNull(first);
+        assertNull(second);
+        assertEquals(1, result.size());
     }
 
     @Test

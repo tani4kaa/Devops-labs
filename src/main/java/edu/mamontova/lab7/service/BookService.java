@@ -52,9 +52,12 @@ public class BookService {
     }
 
     public Book create(BookCreateRequest request) {
+        if (bookRepository.existsByCode(request.code())) {
+            return null;
+        }
         Book book = mapToBook(request);
         book.setCreateDate(LocalDateTime.now());
-        book.setUpdateDate(new ArrayList<LocalDateTime>());
+        book.setUpdateDate(new ArrayList<>());
         return bookRepository.save(book);
     }
 
@@ -67,8 +70,7 @@ public class BookService {
     }
 
     private Book mapToBook(BookCreateRequest request) {
-        Book book = new Book(request.name(), request.code(), request.description());
-        return book;
+        return new Book(request.name(), request.code(), request.description());
     }
 
     public Book update(BookUpdateRequest request) {
@@ -77,15 +79,14 @@ public class BookService {
             List<LocalDateTime> updateDates = bookPersisted.getUpdateDate();
             updateDates.add(LocalDateTime.now());
 
-            Book bookToUpdate =
-                    Book.builder()
-                            .id(request.id())
-                            .name(request.name())
-                            .code(request.code())
-                            .description(request.description())
-                            .createDate(bookPersisted.getCreateDate())
-                            .updateDate(updateDates)
-                            .build();
+            Book bookToUpdate = Book.builder()
+                    .id(request.id())
+                    .name(request.name())
+                    .code(request.code())
+                    .description(request.description())
+                    .createDate(bookPersisted.getCreateDate())
+                    .updateDate(updateDates)
+                    .build();
 
             return bookRepository.save(bookToUpdate);
         }
