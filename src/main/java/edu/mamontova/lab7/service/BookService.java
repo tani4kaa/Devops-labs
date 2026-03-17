@@ -26,9 +26,11 @@ public class BookService {
     private final BookRepository bookRepository;
 
     private List<Book> books = new ArrayList<>(
-            Arrays.asList(new Book("name","00001","description1"),
-                    new Book("2","name2","00002","description2"),
-                    new Book("3","namwe3","00003","description3"))
+            Arrays.asList(
+                    new Book("name", "00001", "description1"),
+                    new Book("2", "name2", "00002", "description2"),
+                    new Book("3", "namwe3", "00003", "description3")
+            )
     );
 
     @PostConstruct
@@ -37,7 +39,7 @@ public class BookService {
         bookRepository.saveAll(books);
     }
 
-    public List<Book> getAll(){
+    public List<Book> getAll() {
         return bookRepository.findAll();
     }
 
@@ -46,26 +48,24 @@ public class BookService {
     }
 
     public Book create(Book book) {
-
         return bookRepository.save(book);
     }
+
     public Book create(BookCreateRequest request) {
-        if (bookRepository.existsByCode(request.code())){
-            return null;
-        }
         Book book = mapToBook(request);
         book.setCreateDate(LocalDateTime.now());
         book.setUpdateDate(new ArrayList<LocalDateTime>());
         return bookRepository.save(book);
     }
+
     public Book update(Book book) {
         return bookRepository.save(book);
     }
 
-
     public void delById(String id) {
         bookRepository.deleteById(id);
     }
+
     private Book mapToBook(BookCreateRequest request) {
         Book book = new Book(request.name(), request.code(), request.description());
         return book;
@@ -76,6 +76,7 @@ public class BookService {
         if (bookPersisted != null) {
             List<LocalDateTime> updateDates = bookPersisted.getUpdateDate();
             updateDates.add(LocalDateTime.now());
+
             Book bookToUpdate =
                     Book.builder()
                             .id(request.id())
@@ -85,8 +86,8 @@ public class BookService {
                             .createDate(bookPersisted.getCreateDate())
                             .updateDate(updateDates)
                             .build();
-            return bookRepository.save(bookToUpdate);
 
+            return bookRepository.save(bookToUpdate);
         }
         return null;
     }
